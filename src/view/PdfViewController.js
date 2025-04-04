@@ -2,37 +2,48 @@ Ext.define('PdfViewer.view.PdfViewController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.pdfviewcontroller',
 
+    init: function() {
+        // コントローラの初期化時に呼ばれる
+        const me = this;
+        
+        // リサイズイベントのハンドラを登録
+        me.resizeHandler = Ext.Function.createBuffered(function() {
+            me.onResize();
+        }, 300, me);
+        
+        Ext.EventManager.onWindowResize(me.resizeHandler, me);
+    },
+
     moveFirst: function () {
-        var view = this.getView();
-        view.setPageNumber(1);
+        this.getView().setPageNumber(1);
     },
 
     movePrevious: function () {
-        var view = this.getView();
+        const view = this.getView();
         view.setPageNumber(view.getPageNumber() - 1);
     },
 
     moveNext: function () {
-        var view = this.getView();
+        const view = this.getView();
         view.setPageNumber(view.getPageNumber() + 1);
     },
 
     moveLast: function () {
-        var view = this.getView();
+        const view = this.getView();
         view.setPageNumber(view.pdfDoc.numPages);
     },
 
     onPagingKeyDown: function (field, e) {
-        var view = this.getView(),
+        const view = this.getView(),
             k = e.getKey();
 
         if (k == e.RETURN) {
             e.stopEvent();
-            var value = field.getValue();
+            const value = field.getValue();
             
             if (view.pdfDoc && value) {
-                var pageNum = parseInt(value, 10);
-                var pageCount = view.pdfDoc.numPages;
+                const pageNum = parseInt(value, 10);
+                const pageCount = view.pdfDoc.numPages;
                 
                 if (!isNaN(pageNum)) {
                     pageNum = Math.min(Math.max(1, pageNum), pageCount);
@@ -43,12 +54,12 @@ Ext.define('PdfViewer.view.PdfViewController', {
     },
 
     onPagingBlur: function(field) {
-        var view = this.getView();
-        var value = field.getValue();
+        const view = this.getView();
+        const value = field.getValue();
         
         if (view.pdfDoc && value) {
-            var pageNum = parseInt(value, 10);
-            var pageCount = view.pdfDoc.numPages;
+            const pageNum = parseInt(value, 10);
+            const pageCount = view.pdfDoc.numPages;
             
             if (!isNaN(pageNum)) {
                 pageNum = Math.min(Math.max(1, pageNum), pageCount);
@@ -58,48 +69,36 @@ Ext.define('PdfViewer.view.PdfViewController', {
     },
 
     onScaleChange: function (combo, newValue, oldValue) {
-        var view = this.getView();
+        const view = this.getView();
         if (newValue !== oldValue) {
             view.setScale(parseFloat(newValue));
         }
     },
 
     onScaleBlur: function (combo) {
-        var view = this.getView();
-        var value = combo.getValue();
+        const view = this.getView();
+        const value = combo.getValue();
         if (value) {
             view.setScale(parseFloat(value));
         }
     },
 
     onBtnZoomInClicked: function () {
-        var view = this.getView();
-        var scale = view.getScale();
+        const view = this.getView();
+        const scale = view.getScale();
         view.setScale(scale + 0.1);
     },
 
     onBtnZoomOutClicked: function () {
-        var view = this.getView();
-        var scale = view.getScale();
+        const view = this.getView();
+        const scale = view.getScale();
         view.setScale(scale - 0.1);
     },
 
-    init: function() {
-        // コントローラの初期化時に呼ばれる
-        var me = this;
-        
-        // リサイズイベントのハンドラを登録
-        me.resizeHandler = Ext.Function.createBuffered(function() {
-            me.onResize();
-        }, 300, me);
-        
-        Ext.EventManager.onWindowResize(me.resizeHandler, me);
-    },
-    
     // コンポーネント破棄時のクリーンアップ
     destroy: function() {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         
         // リサイズイベントのハンドラを削除
         if (me.resizeHandler) {
@@ -119,8 +118,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
     
     // ウィンドウリサイズ時の処理
     onResize: function() {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         
         if (!view || !view.pdfDoc) return;
         
@@ -142,9 +141,9 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * afterrender イベントのハンドラ
      */
     onAfterRenderPdf: function() {
-        var me = this;
-        var view = me.getView();
-        var url = view.getPdfUrl();
+        const me = this;
+        const view = me.getView();
+        const url = view.getPdfUrl();
 
         console.log('onAfterRenderPdf called, url:', url);
 
@@ -167,7 +166,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
         me.scaleCombo = view.down('#scaleCombo');
 
         // PDFビューアー要素を取得
-        var viewer = me.getPdfViewerElement();
+        const viewer = me.getPdfViewerElement();
         if (!viewer) {
             console.error('PDF viewer element not found');
             Ext.Msg.alert('Error', 'PDFビューアー要素が見つかりません。');
@@ -213,6 +212,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
             
             // 表示中のページをレンダリング
             me.renderVisiblePages();
+
+            // me.getViewModel().set('maxPageNumber', numPages);
             
         }).catch(function(err) {
             console.error('Error loading PDF:', err);
@@ -225,21 +226,21 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * @private
      */
     createPagePlaceholders: function(numPages) {
-        var me = this;
-        var viewer = me.getPdfViewerElement();
+        const me = this;
+        const viewer = me.getPdfViewerElement();
         
         if (!viewer) return;
         
         Ext.suspendLayouts();
         
-        for (var i = 1; i <= numPages; i++) {
-            var pageContainer = document.createElement('div');
+        for (let i = 1; i <= numPages; i++) {
+            const pageContainer = document.createElement('div');
             pageContainer.className = 'pdf-page-container';
             pageContainer.dataset.pageNumber = i;
             pageContainer.style.position = 'relative';
             pageContainer.style.margin = '10px auto';
             
-            var canvas = document.createElement('canvas');
+            const canvas = document.createElement('canvas');
             canvas.className = 'pdf-page';
             canvas.dataset.pageNumber = i;
             
@@ -263,31 +264,31 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * @private
      */
     renderVisiblePages: function() {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         
         if (!view || !view.pdfDoc) return;
         
-        var viewer = me.getPdfViewerElement();
+        const viewer = me.getPdfViewerElement();
         if (!viewer) return;
         
-        var viewerRect = viewer.getBoundingClientRect();
-        var pageContainers = viewer.querySelectorAll('.pdf-page-container');
+        const viewerRect = viewer.getBoundingClientRect();
+        const pageContainers = viewer.querySelectorAll('.pdf-page-container');
         
         // 表示中のページとその前後のページをレンダリング
-        for (var i = 0; i < pageContainers.length; i++) {
-            var container = pageContainers[i];
-            var rect = container.getBoundingClientRect();
+        for (let i = 0; i < pageContainers.length; i++) {
+            const container = pageContainers[i];
+            const rect = container.getBoundingClientRect();
             
             // ページが表示領域内またはその近くにあるかどうかを確認
-            var isVisible = (
+            const isVisible = (
                 rect.top < viewerRect.bottom + 1000 && // 下方向に1000px余分に読み込む
                 rect.bottom > viewerRect.top - 500     // 上方向に500px余分に読み込む
             );
             
             if (isVisible) {
-                var pageNum = parseInt(container.dataset.pageNumber, 10);
-                var canvas = container.querySelector('canvas');
+                const pageNum = parseInt(container.dataset.pageNumber, 10);
+                const canvas = container.querySelector('canvas');
                 
                 if (canvas && !canvas.hasAttribute('data-rendered')) {
                     me.renderPage(pageNum, canvas).then(function() {
@@ -305,7 +306,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * @private
      */
     getPdfViewerElement: function() {
-        return document.getElementById('pdf-viewer');
+        return document.getElementById('pdf-viewer-component');
     },
     
     /**
@@ -313,7 +314,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * @private
      */
     getCanvasForPage: function(pageNum) {
-        var canvases = this.getPdfViewerElement().querySelectorAll('canvas');
+        const canvases = this.getPdfViewerElement().querySelectorAll('canvas');
         if (canvases.length >= pageNum) {
             return canvases[pageNum - 1]; // 0-based indexをページ番号に合わせる
         }
@@ -325,8 +326,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * 現在の pageNumber / scale に従ってページをCanvasに描画
      */
     renderPage: function(pageNum, canvas) {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         const deferred = new Ext.Deferred();
 
         if (!view.pdfDoc) {
@@ -334,7 +335,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
             return deferred.reject('PDF document not loaded'); // まだPDFをロードできていない
         }
 
-        var scale = view.getScale();
+        const scale = view.getScale();
         console.log('Rendering page', pageNum, 'with scale', scale);
 
         try {
@@ -347,10 +348,10 @@ Ext.define('PdfViewer.view.PdfViewController', {
                 }
                 
                 try {
-                    var context = canvas.getContext('2d');
+                    const context = canvas.getContext('2d');
 
                     // ページビューポートを作成
-                    var viewport = page.getViewport({ scale: scale });
+                    const viewport = page.getViewport({ scale: scale });
                     console.log('Viewport created', viewport.width, viewport.height);
 
                     // Canvasサイズをページサイズに合わせる
@@ -358,7 +359,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
                     canvas.height = viewport.height;
 
                     // PDFをCanvasにレンダリング
-                    var renderContext = {
+                    const renderContext = {
                         canvasContext: context,
                         viewport: viewport,
                     };
@@ -390,7 +391,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
 
     // pdfUrl が変わったら再度ドキュメントをロードして描画し直す
     updatePdfUrl: function(newUrl, oldUrl) {
-        var view = this.getView();
+        const view = this.getView();
         // すでに画面がレンダリングされていれば、再ロードする
         if (view.rendered && newUrl) {
             // pdfDoc をクリアして再ロード
@@ -407,11 +408,11 @@ Ext.define('PdfViewer.view.PdfViewController', {
      * @private
      */
     scrollToPage: function(pageNum) {
-        var me = this;
-        var viewer = me.getPdfViewerElement();
+        const me = this;
+        const viewer = me.getPdfViewerElement();
         if (!viewer) return;
         
-        var pageContainer = viewer.querySelector('.pdf-page-container[data-page-number="' + pageNum + '"]');
+        const pageContainer = viewer.querySelector('.pdf-page-container[data-page-number="' + pageNum + '"]');
         if (pageContainer) {
             // ページコンテナの位置までスクロール
             pageContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -420,8 +421,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
     
     // pageNumber が変わったら再描画
     updatePageNumber: function(newNum, oldNum) {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         if (!view.rendered || !view.pdfDoc) return;
         
         // ページ番号入力欄を更新
@@ -438,8 +439,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
 
     // scale が変わったら再描画
     updateScale: function(newScale, oldScale) {
-        var me = this;
-        var view = me.getView();
+        const me = this;
+        const view = me.getView();
         if (!view.rendered || !view.pdfDoc) return;
         
         // スケールコンボボックスを更新
@@ -448,12 +449,22 @@ Ext.define('PdfViewer.view.PdfViewController', {
         }
         
         // すべてのページのレンダリング状態をリセット
-        var canvases = me.getPdfViewerElement().querySelectorAll('canvas');
-        for (var i = 0; i < canvases.length; i++) {
+        const canvases = me.getPdfViewerElement().querySelectorAll('canvas');
+        for (let i = 0; i < canvases.length; i++) {
             canvases[i].removeAttribute('data-rendered');
         }
         
         // 表示中のページを再レンダリング
         me.renderVisiblePages();
+    },
+
+    onAfterrenderPdfViewerComponent: function(cmp) {
+        const el = document.createElement('div');
+        el.id = 'pdf-viewer-component';
+        el.style.width = '100%';
+        el.style.height = '100%';
+        el.style.overflow = 'auto';
+        el.style.position = 'relative';
+        cmp.getEl().dom.appendChild(el);
     }
 });

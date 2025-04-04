@@ -1,9 +1,13 @@
 Ext.define('PdfViewer.view.PdfView', {
     extend: 'Ext.panel.Panel',
     xtype: 'pdfviewer',
+    itemId: 'pdfViewer',
     
     controller: 'pdfviewcontroller',
-    viewModel: true,
+    viewModel: {
+        type: 'pdfviewmodel',
+    },
+
 
     config: {
         /**
@@ -35,36 +39,26 @@ Ext.define('PdfViewer.view.PdfView', {
         }
     },
 
-    layout: 'fit',      
-    autoScroll: true,
     border: false,
     bodyPadding: 0,
+    header: false,
+    layout: 'fit',
     
     // PDFビューアーコンポーネント
-    items: [{
-        xtype: 'component',
-        itemId: 'pdfViewerComponent',
-        autoEl: {
-            tag: 'div',
-            cls: 'pdf-viewer-container'
+    items: [
+        {
+            xtype: 'container',
+            itemId: 'pdfViewerContainer',
+            flex: 1,
+            autoScroll: true,
+            html: '<div id="pdf-viewer-component" ></div>',
         },
-        listeners: {
-            afterrender: function(cmp) {
-                // コンポーネントがレンダリングされた後にPDFビューア要素を作成
-                var el = document.createElement('div');
-                el.id = 'pdf-viewer';
-                el.style.width = '100%';
-                el.style.height = 'auto';
-                el.style.overflow = 'auto';
-                el.style.position = 'relative';
-                cmp.getEl().dom.appendChild(el);
-            }
-        }
-    }],
+    ],
     dockedItems: [
         {
             xtype: 'toolbar',
             dock: 'bottom',
+            height: 40,
             items: [
                 {
                     itemId: 'first',
@@ -78,30 +72,36 @@ Ext.define('PdfViewer.view.PdfView', {
                     itemId: 'prev',
                     iconCls: 'ext ext-chevron-left',
                     disabled: true,
+                    bind: {
+                        // disabled: '{pageNumber == 1}',
+                    },
                     listeners: {
                         click: 'movePrevious',
                         scope: 'controller'
                     }
-                        }, '-', {
-                            xtype: 'numberfield',
-                            itemId: 'inputItem',
-                            name: 'inputItem',
-                            width: 50,
-                            minValue: 1,
-                            allowDecimals: false,
-                            hideTrigger: true,
-                            keyNavEnabled: false,
-                            mouseWheelEnabled: false,
-                            disabled: true,
-                            listeners: {
-                                keydown: 'onPagingKeyDown',
-                                blur: 'onPagingBlur',
-                                scope: 'controller'
-                            }
+                }, '-', {
+                    xtype: 'numberfield',
+                    itemId: 'inputItem',
+                    name: 'inputItem',
+                    width: 50,
+                    minValue: 1,
+                    allowDecimals: false,
+                    hideTrigger: true,
+                    keyNavEnabled: false,
+                    mouseWheelEnabled: false,
+                    disabled: true,
+                    listeners: {
+                        keydown: 'onPagingKeyDown',
+                        blur: 'onPagingBlur',
+                        scope: 'controller'
+                    }
                 }, '-', {
                     itemId: 'next',
                     iconCls: 'ext ext-chevron-right',
                     disabled: true,
+                    bind: {
+                        // disabled: '{pageNumber == maxPageNumber}',
+                    },
                     listeners: {
                         click: 'moveNext',
                         scope: 'controller'
@@ -114,15 +114,17 @@ Ext.define('PdfViewer.view.PdfView', {
                         click: 'moveLast',
                         scope: 'controller'
                     }
-                }, '->', {
+                }, '->', 
+                {
                     xtype: 'button',
-                    iconCls: 'fa fa-search-plus',
-                    tooltip: 'Zoom in',
+                    tooltip: 'Zoom out',
+                    iconCls: 'fa fa-search-minus',
                     listeners: {
-                        click: 'onBtnZoomInClicked',
+                        click: 'onBtnZoomOutClicked',
                         scope: 'controller'
                     }
-                }, {
+                },
+                {
                     itemId: 'scaleCombo',
                     xtype: 'combobox',
                     width: 80,
@@ -142,15 +144,16 @@ Ext.define('PdfViewer.view.PdfView', {
                         blur: 'onScaleBlur',
                         scope: 'controller'
                     }
-                }, {
+                },
+                {
                     xtype: 'button',
-                    tooltip: 'Zoom out',
-                    iconCls: 'fa fa-search-minus',
+                    iconCls: 'fa fa-search-plus',
+                    tooltip: 'Zoom in',
                     listeners: {
-                        click: 'onBtnZoomOutClicked',
+                        click: 'onBtnZoomInClicked',
                         scope: 'controller'
                     }
-                }
+                }, 
             ]
         }
     ],
@@ -170,7 +173,7 @@ Ext.define('PdfViewer.view.PdfView', {
     // pdfUrl が変わったら再度ドキュメントをロードして描画し直す
     updatePdfUrl: function(newUrl, oldUrl) {
         // コントローラに処理を委譲
-        var controller = this.getController();
+        const controller = this.getController();
         if (controller) {
             controller.updatePdfUrl(newUrl, oldUrl);
         }
@@ -179,7 +182,7 @@ Ext.define('PdfViewer.view.PdfView', {
     // pageNumber が変わったら再描画
     updatePageNumber: function(newNum, oldNum) {
         // コントローラに処理を委譲
-        var controller = this.getController();
+        const controller = this.getController();
         if (controller) {
             controller.updatePageNumber(newNum, oldNum);
         }
@@ -188,7 +191,7 @@ Ext.define('PdfViewer.view.PdfView', {
     // scale が変わったら再描画
     updateScale: function(newScale, oldScale) {
         // コントローラに処理を委譲
-        var controller = this.getController();
+        const controller = this.getController();
         if (controller) {
             controller.updateScale(newScale, oldScale);
         }
