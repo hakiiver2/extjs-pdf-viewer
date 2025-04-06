@@ -125,17 +125,42 @@ Ext.define('PdfViewer.view.PdfView', {
                     }
                 },
                 {
-                    itemId: 'scaleCombo',
                     xtype: 'combobox',
+                    itemId: 'scaleCombo',
                     width: 80,
                     store: [
-                        [0.5, '50%'],
-                        [0.75, '75%'],
-                        [1.0, '100%'],
-                        [1.25, '125%'],
-                        [1.5, '150%'],
-                        [2.0, '200%']
+                        {
+                            value: 0.25,
+                            text: '25%'
+                        },
+                        {
+                            value: 0.5,
+                            text: '50%'
+                        },
+                        {
+                            value: 0.75,
+                            text: '75%'
+                        },
+                        {
+                            value: 1.0,
+                            text: '100%'
+                        },
+                        {
+                            value: 1.25,
+                            text: '125%'
+                        },
+                        {
+                            value: 1.5,
+                            text: '150%'
+                        },
+                        {
+                            value: 2.0,
+                            text: '200%'
+                        }
                     ],
+                    queryMode: 'local',
+                    displayField: 'text',
+                    valueField: 'value',
                     value: 1.0,
                     editable: false,
                     disabled: true,

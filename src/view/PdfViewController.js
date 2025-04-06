@@ -83,16 +83,33 @@ Ext.define('PdfViewer.view.PdfViewController', {
         }
     },
 
-    onBtnZoomInClicked: function () {
+    onBtnZoomInClicked: function (a, b, c, d, e) {
+        console.log(a, b, c, d, e)
         const view = this.getView();
         const scale = view.getScale();
-        view.setScale(scale + 0.1);
+        const combo = view.up().down('#scaleCombo');
+        const store = combo.getStore();
+        const scaleValue = store.findRecord('value', scale);
+        if (scaleValue) {
+            const index = store.indexOf(scaleValue);
+            if (index < store.getCount() - 1) {
+                view.setScale(store.getAt(index + 1).get('value'));
+            }
+        }
     },
 
     onBtnZoomOutClicked: function () {
         const view = this.getView();
         const scale = view.getScale();
-        view.setScale(scale - 0.1);
+        const combo = view.up().down('#scaleCombo');
+        const store = combo.getStore();
+        const scaleValue = store.findRecord('value', scale);
+        if (scaleValue) {
+            const index = store.indexOf(scaleValue);
+            if (index > 0) {
+                view.setScale(store.getAt(index - 1).get('value'));
+            }
+        }
     },
 
     // コンポーネント破棄時のクリーンアップ
