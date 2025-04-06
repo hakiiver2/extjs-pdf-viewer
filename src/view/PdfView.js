@@ -231,15 +231,15 @@ Ext.define('PdfViewer.view.PdfView', {
         }
     },
 
-    // pageNumber が変わったら再描画
-    updatePageNumber: function(newNum, oldNum) {
-        // コントローラに処理を委譲
-        const controller = this.getController();
-        if (controller) {
-            controller.updatePageNumber(newNum, oldNum);
-        }
-    },
-
+    // // pageNumber が変わったら再描画
+    // updatePageNumber: function(newNum, oldNum) {
+    //     // コントローラに処理を委譲
+    //     const controller = this.getController();
+    //     if (controller) {
+    //         controller.updatePageNumber(newNum, oldNum);
+    //     }
+    // },
+    //
     // scale が変わったら再描画
     updateScale: function(newScale, oldScale) {
         // コントローラに処理を委譲

@@ -32,24 +32,28 @@ Ext.define('PdfViewer.view.PdfViewController', {
     moveFirst: function () {
         this.suspendContainerEvents();
         this.getView().setPageNumber(1);
+        this.updatePageNumber()
     },
 
     movePrevious: function () {
         const view = this.getView();
         this.suspendContainerEvents();
         view.setPageNumber(view.getPageNumber() - 1);
+        this.updatePageNumber()
     },
 
     moveNext: function () {
         const view = this.getView();
         this.suspendContainerEvents();
         view.setPageNumber(view.getPageNumber() + 1);
+        this.updatePageNumber()
     },
 
     moveLast: function () {
         const view = this.getView();
         this.suspendContainerEvents();
         view.setPageNumber(view.pdfDoc.numPages);
+        this.updatePageNumber()
     },
 
     onPagingKeyDown: function (field, e) {
@@ -67,6 +71,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
                 if (!isNaN(pageNum)) {
                     pageNum = Math.min(Math.max(1, pageNum), pageCount);
                     view.setPageNumber(pageNum);
+                    this.updatePageNumber()
                 }
             }
         }
@@ -83,6 +88,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
             if (!isNaN(pageNum)) {
                 pageNum = Math.min(Math.max(1, pageNum), pageCount);
                 view.setPageNumber(pageNum);
+                this.updatePageNumber()
             }
         }
     },
