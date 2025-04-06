@@ -49,9 +49,14 @@ Ext.define('PdfViewer.view.PdfView', {
         {
             xtype: 'container',
             itemId: 'pdfViewerContainer',
+            cls: 'pdf-viewer-container',
             flex: 1,
             autoScroll: true,
             html: '<div id="pdf-viewer-component" ></div>',
+            listeners: {
+                afterrender: 'onPdfViewerAfterRender',
+                scope: 'controller'
+            }
         },
     ],
     dockedItems: [
@@ -60,26 +65,27 @@ Ext.define('PdfViewer.view.PdfView', {
             dock: 'bottom',
             height: 40,
             items: [
+                // {
+                //     itemId: 'first',
+                //     disabled: true,
+                //     text: '<<',
+                //     listeners: {
+                //         click: 'moveFirst',
+                //         scope: 'controller'
+                //     }
+                // }, {
+                //     itemId: 'prev',
+                //     disabled: true,
+                //     text: '<',
+                //     bind: {
+                //     },
+                //     listeners: {
+                //         click: 'movePrevious',
+                //         scope: 'controller'
+                //     }
+                // }, '-',
+                '->',
                 {
-                    itemId: 'first',
-                    iconCls: 'ext ext-double-chevron-left',
-                    disabled: true,
-                    listeners: {
-                        click: 'moveFirst',
-                        scope: 'controller'
-                    }
-                }, {
-                    itemId: 'prev',
-                    iconCls: 'ext ext-chevron-left',
-                    disabled: true,
-                    bind: {
-                        // disabled: '{pageNumber == 1}',
-                    },
-                    listeners: {
-                        click: 'movePrevious',
-                        scope: 'controller'
-                    }
-                }, '-', {
                     xtype: 'numberfield',
                     itemId: 'inputItem',
                     name: 'inputItem',
@@ -89,32 +95,34 @@ Ext.define('PdfViewer.view.PdfView', {
                     hideTrigger: true,
                     keyNavEnabled: false,
                     mouseWheelEnabled: false,
+                    editable: false,
                     disabled: true,
                     listeners: {
                         keydown: 'onPagingKeyDown',
                         blur: 'onPagingBlur',
                         scope: 'controller'
                     }
-                }, '-', {
-                    itemId: 'next',
-                    iconCls: 'ext ext-chevron-right',
-                    disabled: true,
-                    bind: {
-                        // disabled: '{pageNumber == maxPageNumber}',
-                    },
-                    listeners: {
-                        click: 'moveNext',
-                        scope: 'controller'
-                    }
-                }, {
-                    itemId: 'last',
-                    iconCls: 'ext ext-double-chevron-right',
-                    disabled: true,
-                    listeners: {
-                        click: 'moveLast',
-                        scope: 'controller'
-                    }
-                }, '->', 
+                }, '-',
+                // {
+                //     itemId: 'next',
+                //     text: '>',
+                //     disabled: true,
+                //     bind: {
+                //         // disabled: '{pageNumber == maxPageNumber}',
+                //     },
+                //     listeners: {
+                //         click: 'moveNext',
+                //         scope: 'controller'
+                //     }
+                // }, {
+                //     itemId: 'last',
+                //     text: '>>',
+                //     disabled: true,
+                //     listeners: {
+                //         click: 'moveLast',
+                //         scope: 'controller'
+                //     }
+                // }, '->', 
                 {
                     xtype: 'button',
                     tooltip: 'Zoom out',
@@ -178,7 +186,26 @@ Ext.define('PdfViewer.view.PdfView', {
                         click: 'onBtnZoomInClicked',
                         scope: 'controller'
                     }
+                },
+                '->',
+                {
+                    xtype: 'button',
+                    iconCls: 'fa fa-download',
+                    tooltip: 'download',
+                    listeners: {
+                        click: 'onDownloadButtonClick',
+                        scope: 'controller'
+                    }
                 }, 
+                {
+                    xtype: 'button',
+                    iconCls: 'fa fa-print',
+                    tooltip: 'print',
+                    listeners: {
+                        click: 'onPrintButtonClick',
+                        scope: 'controller'
+                    }
+                },
             ]
         }
     ],

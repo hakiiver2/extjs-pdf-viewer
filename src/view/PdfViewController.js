@@ -9,27 +9,46 @@ Ext.define('PdfViewer.view.PdfViewController', {
         // リサイズイベントのハンドラを登録
         me.resizeHandler = Ext.Function.createBuffered(function() {
             me.onResize();
-        }, 300, me);
+        }, 100, me);
         
         Ext.EventManager.onWindowResize(me.resizeHandler, me);
     },
 
+    //onPdfViewerAfterRenderで定義しているscrollイベントリスナーを削除
+    suspendContainerEvents: function() {
+        const pdfViewerContainer = this.getView().down('#pdfViewerContainer');
+        if (pdfViewerContainer) {
+            pdfViewerContainer.getEl().suspendEvents();
+        }
+    },
+
+    resumeContainerEvents: function() {
+        const pdfViewerContainer = this.getView().down('#pdfViewerContainer');
+        if (pdfViewerContainer) {
+            pdfViewerContainer.getEl().resumeEvents();
+        }
+    },
+
     moveFirst: function () {
+        this.suspendContainerEvents();
         this.getView().setPageNumber(1);
     },
 
     movePrevious: function () {
         const view = this.getView();
+        this.suspendContainerEvents();
         view.setPageNumber(view.getPageNumber() - 1);
     },
 
     moveNext: function () {
         const view = this.getView();
+        this.suspendContainerEvents();
         view.setPageNumber(view.getPageNumber() + 1);
     },
 
     moveLast: function () {
         const view = this.getView();
+        this.suspendContainerEvents();
         view.setPageNumber(view.pdfDoc.numPages);
     },
 
@@ -84,7 +103,6 @@ Ext.define('PdfViewer.view.PdfViewController', {
     },
 
     onBtnZoomInClicked: function (a, b, c, d, e) {
-        console.log(a, b, c, d, e)
         const view = this.getView();
         const scale = view.getScale();
         const combo = view.up().down('#scaleCombo');
@@ -190,12 +208,6 @@ Ext.define('PdfViewer.view.PdfViewController', {
             return;
         }
 
-        // スクロールイベントのリスナーを追加
-        if (viewer.addEventListener) {
-            viewer.addEventListener('scroll', Ext.Function.createBuffered(function() {
-                me.onViewerScroll();
-            }, 100, me));
-        }
 
         console.log('Loading PDF from URL:', url);
 
@@ -267,13 +279,43 @@ Ext.define('PdfViewer.view.PdfViewController', {
         
         Ext.resumeLayouts(true);
     },
-    
-    /**
-     * ビューアーのスクロール時に呼ばれる
-     * @private
-     */
-    onViewerScroll: function() {
-        this.renderVisiblePages();
+
+    onPdfViewerAfterRender: function(viewer) {
+        const me = this;
+
+        // スクロールイベントリスナーを追加
+        viewer.getEl().on('scroll', function() {
+            me.onPdfViewerScroll();
+        })
+    },
+
+    onPdfViewerScroll: function() {
+        const me = this;
+
+        // 現在のページ番号を更新
+        const viewer = me.getPdfViewerElement();
+        if (!viewer) return;
+        const scrollTop = viewer.scrollTop;
+        const pageContainers = viewer.querySelectorAll('.pdf-page-container');
+
+        let currentPageNum = 1;
+
+        for (let i = 0; i < pageContainers.length; i++) {
+            const container = pageContainers[i];
+            const rect = container.getBoundingClientRect();
+            
+            // ページが表示領域内にあるかどうかを確認
+            // 半分以上が表示されている場合に現在のページとする
+            if (rect.top < viewer.clientHeight && rect.bottom > viewer.clientHeight / 2) {
+                currentPageNum = i + 1;
+                break;
+            }
+        }
+
+        me.getView().setPageNumber(currentPageNum);
+        // ページ番号を入力フィールドに設定
+        me.inputItem.setValue(currentPageNum);
+
     },
     
     /**
@@ -483,5 +525,29 @@ Ext.define('PdfViewer.view.PdfViewController', {
         el.style.overflow = 'auto';
         el.style.position = 'relative';
         cmp.getEl().dom.appendChild(el);
+    },
+
+    onDownloadButtonClick: function() {
+        const view = this.getView();
+        const pdfUrl = view.getPdfUrl();
+        
+        if (pdfUrl) {
+            // PDFをダウンロード
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            Ext.Msg.alert('Error', 'PDF URL is not specified.');
+        }
+    },
+
+    // pdfを印刷する(PrintJs)
+    onPrintButtonClick: function() {
+        printJS({
+            printable: this.getView().getPdfUrl(),
+            type: 'pdf',
+        });
     }
 });
