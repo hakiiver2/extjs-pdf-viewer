@@ -14,7 +14,7 @@ Ext.define('PdfViewer.view.PdfView', {
          * @cfg {String} pdfUrl
          * 表示したいPDFファイルのURLを指定
          */
-        pdfUrl: 'https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf',
+        pdfUrl: '',
 
         /**
          * @cfg {Number} pageNumber
@@ -63,7 +63,7 @@ Ext.define('PdfViewer.view.PdfView', {
         {
             xtype: 'toolbar',
             dock: 'bottom',
-            height: 40,
+            height: 50,
             items: [
                 // {
                 //     itemId: 'first',
@@ -102,6 +102,14 @@ Ext.define('PdfViewer.view.PdfView', {
                         blur: 'onPagingBlur',
                         scope: 'controller'
                     }
+                }, 
+                {
+                    xtype: 'displayfield',
+                    itemId: 'maxPageDisplay',
+                    width: 30,
+                    bind: {
+                        value: '/ {maxPage}'
+                    }
                 }, '-',
                 // {
                 //     itemId: 'next',
@@ -126,7 +134,8 @@ Ext.define('PdfViewer.view.PdfView', {
                 {
                     xtype: 'button',
                     tooltip: 'Zoom out',
-                    iconCls: 'fa fa-search-minus',
+                    iconCls: 'fa fa-search-minus fa-2x',
+                    scale: 'large',
                     listeners: {
                         click: 'onBtnZoomOutClicked',
                         scope: 'controller'
@@ -169,9 +178,9 @@ Ext.define('PdfViewer.view.PdfView', {
                     queryMode: 'local',
                     displayField: 'text',
                     valueField: 'value',
-                    value: 1.0,
                     editable: false,
                     disabled: true,
+                    value: 1.25,
                     listeners: {
                         change: 'onScaleChange',
                         blur: 'onScaleBlur',
@@ -180,8 +189,9 @@ Ext.define('PdfViewer.view.PdfView', {
                 },
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-search-plus',
+                    iconCls: 'fa fa-search-plus fa-2x',
                     tooltip: 'Zoom in',
+                    scale: 'large',
                     listeners: {
                         click: 'onBtnZoomInClicked',
                         scope: 'controller'
@@ -190,7 +200,8 @@ Ext.define('PdfViewer.view.PdfView', {
                 '->',
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-download',
+                    iconCls: 'fa fa-download fa-2x',
+                    scale: 'large',
                     tooltip: 'download',
                     listeners: {
                         click: 'onDownloadButtonClick',
@@ -199,7 +210,8 @@ Ext.define('PdfViewer.view.PdfView', {
                 }, 
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-print',
+                    iconCls: 'fa fa-print fa-2x',
+                    scale: 'large',
                     tooltip: 'print',
                     listeners: {
                         click: 'onPrintButtonClick',

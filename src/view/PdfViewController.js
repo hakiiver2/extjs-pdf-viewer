@@ -189,7 +189,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
         console.log('onAfterRenderPdf called, url:', url);
 
         if (!url) {
-            Ext.Msg.alert('Error', 'pdfUrl が指定されていません。');
+            // Ext.Msg.alert('Error', 'pdfUrl が指定されていません。');
             return;
         }
 
@@ -215,15 +215,15 @@ Ext.define('PdfViewer.view.PdfViewController', {
         }
 
 
-        console.log('Loading PDF from URL:', url);
-
         // PDF.js の API を呼び出して、PDF をロード
         pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            console.log('PDF loaded successfully, pages:', pdf.numPages);
             const numPages = pdf.numPages;
 
             // ロード完了後、インスタンスプロパティとして保持しておく
             view.pdfDoc = pdf;
+            
+            // ViewModelに最大ページ数を設定
+            me.getViewModel().set('maxPage', numPages);
             
             // ページ数が分かったので、ボタンを有効化
             if (me.firstBtn) me.firstBtn.setDisabled(false);
