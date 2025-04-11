@@ -551,9 +551,24 @@ Ext.define('PdfViewer.view.PdfViewController', {
 
     // pdfを印刷する(PrintJs)
     onPrintButtonClick: function() {
-        printJS({
-            printable: this.getView().getPdfUrl(),
-            type: 'pdf',
-        });
+
+        fetch(this.getView().getPdfUrl(), { method: 'GET' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.blob();
+            })
+            .then(pdfBlob => {
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                printJS({
+                    // printable: this.getView().getPdfUrl(),
+                    printable: blobUrl,
+                    type: 'pdf',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching PDF:', error);
+            });
     }
 });
