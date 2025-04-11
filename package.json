@@ -257,6 +257,9 @@
                 "input": "ES8",
                 "output": "ES5"
             }
-        }
+        },
+        "resources": [
+            "resources"
+        ]
     }
 }

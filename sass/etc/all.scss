@@ -1,7 +1,28 @@
 .pdf-viewer-container {
-    background-color: rgb(40, 40, 40);
+    // background-color: rgb(40, 40, 40);
+    background-color: rgb(230, 230, 230);
 }
 /* pdfを中央に配置 */
 .pdf-page-container {
     text-align-last: center;
+}
+.download-button {
+    background-color: #007cd7 !important;
+    border-color: #007cd7 !important;
+}
+.plus-icon {
+    background-image: url(../resources/images/pdfviewer/plus.svg);
+    background-size: contain;
+}
+.minus-icon {
+    background-image: url(../resources/images/pdfviewer/minus.svg);
+    background-size: contain;
+}
+.download-icon {
+    background-image: url(../resources/images/pdfviewer/download.svg);
+    background-size: contain;
+}
+.print-icon {
+    background-image: url(../resources/images/pdfviewer/print.svg);
+    background-size: contain;
 }

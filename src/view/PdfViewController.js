@@ -312,10 +312,34 @@ Ext.define('PdfViewer.view.PdfViewController', {
             
             // ページが表示領域内にあるかどうかを確認
             // 半分以上が表示されている場合に現在のページとする
+            // scaleが変わった場合、ページの高さが変わるので、表示領域の高さを考慮する
             if (rect.top < viewer.clientHeight && rect.bottom > viewer.clientHeight / 2) {
                 currentPageNum = i + 1;
                 break;
             }
+
+            // const viewerRect = viewer.getBoundingClientRect();
+            // const pageHeight = rect.height;
+            // const pageTop = rect.top - viewerRect.top + scrollTop;
+            // const pageBottom = pageTop + pageHeight;
+            // const viewerHeight = viewerRect.height;
+            // const isVisible = (
+            //     pageTop < scrollTop + viewerHeight &&
+            //     pageBottom > scrollTop
+            // );
+            // if (isVisible) {
+            //     const pageNum = parseInt(container.dataset.pageNumber, 10);
+            //     currentPageNum = pageNum;
+            //     break;
+            // }
+            //
+            // // ページが表示領域内にある場合、ページ番号を更新 
+            // if (pageTop < scrollTop + viewerHeight && pageBottom > scrollTop) {
+            //     const pageNum = parseInt(container.dataset.pageNumber, 10);
+            //     currentPageNum = pageNum;
+            //     break;
+            // }
+
         }
 
         me.getView().setPageNumber(currentPageNum);
@@ -551,9 +575,24 @@ Ext.define('PdfViewer.view.PdfViewController', {
 
     // pdfを印刷する(PrintJs)
     onPrintButtonClick: function() {
-        printJS({
-            printable: this.getView().getPdfUrl(),
-            type: 'pdf',
-        });
+
+        fetch(this.getView().getPdfUrl(), { method: 'GET' })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.blob();
+            })
+            .then(pdfBlob => {
+                const blobUrl = URL.createObjectURL(pdfBlob);
+                printJS({
+                    // printable: this.getView().getPdfUrl(),
+                    printable: blobUrl,
+                    type: 'pdf',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching PDF:', error);
+            });
     }
 });

@@ -8,7 +8,6 @@ Ext.define('PdfViewer.view.PdfView', {
         type: 'pdfviewmodel',
     },
 
-
     config: {
         /**
          * @cfg {String} pdfUrl
@@ -27,6 +26,7 @@ Ext.define('PdfViewer.view.PdfView', {
          * PDFページの拡大率 (1.0 = 100%)
          */
         scale: 1.0,
+
     },
     
     // 初期化時にPDF.jsライブラリが読み込まれているか確認
@@ -134,7 +134,7 @@ Ext.define('PdfViewer.view.PdfView', {
                 {
                     xtype: 'button',
                     tooltip: 'Zoom out',
-                    iconCls: 'fa fa-search-minus fa-2x',
+                    iconCls: 'fa minus-icon fa-2x',
                     scale: 'large',
                     listeners: {
                         click: 'onBtnZoomOutClicked',
@@ -158,22 +158,12 @@ Ext.define('PdfViewer.view.PdfView', {
                             value: 0.75,
                             text: '75%'
                         },
-                        {
-                            value: 1.0,
-                            text: '100%'
-                        },
-                        {
-                            value: 1.25,
-                            text: '125%'
-                        },
-                        {
-                            value: 1.5,
-                            text: '150%'
-                        },
-                        {
-                            value: 2.0,
-                            text: '200%'
-                        }
+                        // 100%から1000%までの拡大率を追加
+                        // 25%刻みで10段階
+                        ...Array.from({ length: 37 }, (_, i) => ({
+                            value: (i + 4) * 0.25,
+                            text: `${(i + 4) * 25}%`
+                        })),
                     ],
                     queryMode: 'local',
                     displayField: 'text',
@@ -189,7 +179,7 @@ Ext.define('PdfViewer.view.PdfView', {
                 },
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-search-plus fa-2x',
+                    iconCls: 'fa plus-icon fa-2x',
                     tooltip: 'Zoom in',
                     scale: 'large',
                     listeners: {
@@ -200,9 +190,11 @@ Ext.define('PdfViewer.view.PdfView', {
                 '->',
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-download fa-2x',
+                    // iconCls: 'fa fa-download fa-2x',
                     scale: 'large',
                     tooltip: 'download',
+                    userCls: 'download-button',
+                    iconCls: 'fa download-icon fa-2x',
                     listeners: {
                         click: 'onDownloadButtonClick',
                         scope: 'controller'
@@ -210,7 +202,7 @@ Ext.define('PdfViewer.view.PdfView', {
                 }, 
                 {
                     xtype: 'button',
-                    iconCls: 'fa fa-print fa-2x',
+                    iconCls: 'fa print-icon fa-2x',
                     scale: 'large',
                     tooltip: 'print',
                     listeners: {
