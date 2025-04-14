@@ -27,6 +27,21 @@ Ext.define('PdfViewer.view.PdfView', {
          */
         scale: 1.0,
 
+        /**
+         * @cfg {String} pdfName
+         * PDFファイル名
+         * ダウンロード時に使用
+         *
+        */
+        pdfName: '',
+
+        /**
+         * @cfg {String} pdfDownloadUrl
+         * PDFファイルのダウンロードURL
+         * ダウンロード時に使用
+         *
+         */
+        pdfDownloadUrl: '',
     },
     
     // 初期化時にPDF.jsライブラリが読み込まれているか確認

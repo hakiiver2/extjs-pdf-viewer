@@ -563,11 +563,22 @@ Ext.define('PdfViewer.view.PdfViewController', {
         
         if (pdfUrl) {
             // PDFをダウンロード
-            const link = document.createElement('a');
-            link.href = pdfUrl;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const alink = document.createElement('a');
+            alink.download = view.getPdfName() || 'download.pdf';
+            alink.href = view.getPdfDownloadUrl() || pdfUrl;
+            if (window.navigator.msSaveBlob) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", alink.href, true);
+                xhr.responseType = "blob";
+                xhr.onload = function (e) {
+                    const blob = xhr.response;
+                    window.navigator.msSaveBlob(blob, alink.download);
+                }
+                xhr.send();
+            } else {
+                const mouseEvent = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
+                alink.dispatchEvent(mouseEvent)
+            }
         } else {
             Ext.Msg.alert('Error', 'PDF URL is not specified.');
         }
