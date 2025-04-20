@@ -42,6 +42,13 @@ Ext.define('PdfViewer.view.PdfView', {
          *
          */
         pdfDownloadUrl: '',
+
+        /**
+         * @cfg {Boolean} showPrintButton
+         * 印刷可能かどうか
+         * true: 印刷可能, false: 印刷不可
+         */
+        showPrintButton: false,
     },
     
     // 初期化時にPDF.jsライブラリが読み込まれているか確認
@@ -220,6 +227,9 @@ Ext.define('PdfViewer.view.PdfView', {
                     iconCls: 'fa print-icon fa-2x',
                     scale: 'large',
                     tooltip: 'print',
+                    disabled: true,
+                    hidden: true,
+                    itemId: 'printButton',
                     listeners: {
                         click: 'onPrintButtonClick',
                         scope: 'controller'
@@ -266,5 +276,14 @@ Ext.define('PdfViewer.view.PdfView', {
         if (controller) {
             controller.updateScale(newScale, oldScale);
         }
-    }
+    },
+
+    // showPrintButton が変わったら再描画
+    updateShowPrintButton: function(newIsPrint, oldIsPrint) {
+        // コントローラに処理を委譲
+        const controller = this.getController();
+        if (controller) {
+            controller.updateShowPrintButton(newIsPrint, oldIsPrint);
+        }
+    },
 });

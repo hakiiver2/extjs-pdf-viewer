@@ -205,6 +205,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
         me.lastBtn = view.down('#last');
         me.inputItem = view.down('#inputItem');
         me.scaleCombo = view.down('#scaleCombo');
+        me.printButton = view.down('#printButton');
 
         // PDFビューアー要素を取得
         const viewer = me.getPdfViewerElement();
@@ -236,6 +237,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
                 me.inputItem.setMaxValue(numPages);
             }
             if (me.scaleCombo) me.scaleCombo.setDisabled(false);
+            if (me.printButton) me.printButton.setDisabled(false);
+            if (me.printButton) me.printButton.setVisible(view.getShowPrintButton());
             
             // 現在のビューアー内のすべての要素をクリア
             while (viewer.firstChild) {
@@ -605,5 +608,13 @@ Ext.define('PdfViewer.view.PdfViewController', {
             .catch(error => {
                 console.error('Error fetching PDF:', error);
             });
+    },
+
+    updateShowPrintButton: function(newValue) {
+        const view = this.getView();
+        if (!view.rendered) return;
+        if (me.printButton) {
+            me.printButton.setHidden(!newValue);
+        }
     }
 });
