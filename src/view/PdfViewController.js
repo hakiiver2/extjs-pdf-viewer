@@ -237,6 +237,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
                 me.inputItem.setDisabled(false);
                 me.inputItem.setValue(view.getPageNumber());
                 me.inputItem.setMaxValue(numPages);
+                me.updateShowPageNumber(view.getShowPageNumber());
             }
             if (me.scaleCombo) me.scaleCombo.setDisabled(false);
             if (me.printButton) me.printButton.setDisabled(false);
@@ -621,13 +622,14 @@ Ext.define('PdfViewer.view.PdfViewController', {
     },
 
     updateShowPageNumber: function(newValue) {
+        console.log(newValue)
         const view = this.getView();
         if (!view.rendered) return;
         if (this.inputItem) {
-            this.inputItem.setHidden(newValue);
+            this.inputItem.setHidden(!newValue);
         }
         if (this.maxPageDisplay) {
-            this.maxPageDisplay.setHidden(newValue);
+            this.maxPageDisplay.setHidden(!newValue);
         }
     },
 
