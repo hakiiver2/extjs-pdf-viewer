@@ -204,8 +204,10 @@ Ext.define('PdfViewer.view.PdfViewController', {
         me.nextBtn = view.down('#next');
         me.lastBtn = view.down('#last');
         me.inputItem = view.down('#inputItem');
+        me.maxPageDisplay = view.down('#maxPageDisplay');
         me.scaleCombo = view.down('#scaleCombo');
         me.printButton = view.down('#printButton');
+        me.downloadButton = view.down('#downloadButton');
 
         // PDFビューアー要素を取得
         const viewer = me.getPdfViewerElement();
@@ -613,8 +615,27 @@ Ext.define('PdfViewer.view.PdfViewController', {
     updateShowPrintButton: function(newValue) {
         const view = this.getView();
         if (!view.rendered) return;
-        if (me.printButton) {
-            me.printButton.setHidden(!newValue);
+        if (this.printButton) {
+            this.printButton.setHidden(!newValue);
+        }
+    },
+
+    updateShowPageNumber: function(newValue) {
+        const view = this.getView();
+        if (!view.rendered) return;
+        if (this.inputItem) {
+            this.inputItem.setHidden(newValue);
+        }
+        if (this.maxPageDisplay) {
+            this.maxPageDisplay.setHidden(newValue);
+        }
+    },
+
+    updateDownloadButtonText: function(newValue) {
+        const view = this.getView();
+        if (!view.rendered) return;
+        if (this.downloadButton) {
+            this.downloadButton.setText(newValue);
         }
     }
 });

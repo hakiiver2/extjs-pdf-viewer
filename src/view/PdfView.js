@@ -49,6 +49,20 @@ Ext.define('PdfViewer.view.PdfView', {
          * true: 印刷可能, false: 印刷不可
          */
         showPrintButton: false,
+
+        /**
+         * @cfg {Boolean} showPageNumber
+         * ページ番号表示
+         * true: 表示, false: 非表示
+         */
+        showPageNumber: false,
+
+        /**
+         * @cfg {String} downloadButtonText
+         * ダウンロードボタンのテキスト
+         *
+         */
+        downloadButtonText: '',
     },
     
     // 初期化時にPDF.jsライブラリが読み込まれているか確認
@@ -209,11 +223,11 @@ Ext.define('PdfViewer.view.PdfView', {
                         scope: 'controller'
                     }
                 },
-                '->',
                 {
                     xtype: 'button',
                     // iconCls: 'fa fa-download fa-2x',
                     scale: 'large',
+                    itemId: 'downloadButton',
                     tooltip: 'download',
                     userCls: 'download-button',
                     iconCls: 'fa download-icon fa-2x',
@@ -222,6 +236,7 @@ Ext.define('PdfViewer.view.PdfView', {
                         scope: 'controller'
                     }
                 }, 
+                '->',
                 {
                     xtype: 'button',
                     iconCls: 'fa print-icon fa-2x',
@@ -284,6 +299,24 @@ Ext.define('PdfViewer.view.PdfView', {
         const controller = this.getController();
         if (controller) {
             controller.updateShowPrintButton(newIsPrint, oldIsPrint);
+        }
+    },
+
+    // showPageNumber が変わったら再描画
+    updateShowPageNumber: function(newIsShow, oldIsShow) {
+        // コントローラに処理を委譲
+        const controller = this.getController();
+        if (controller) {
+            controller.updateShowPageNumber(newIsShow, oldIsShow);
+        }
+    },
+
+    // downloadButtonText が変わったら再描画
+    updateDownloadButtonText: function(newText, oldText) {
+        // コントローラに処理を委譲
+        const controller = this.getController();
+        if (controller) {
+            controller.updateDownloadButtonText(newText, oldText);
         }
     },
 });
