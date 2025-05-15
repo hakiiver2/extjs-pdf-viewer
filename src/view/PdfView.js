@@ -181,6 +181,7 @@ Ext.define('PdfViewer.view.PdfView', {
                     xtype: 'combobox',
                     itemId: 'scaleCombo',
                     width: 80,
+                    height: 40,
                     store: [
                         {
                             value: 0.25,
