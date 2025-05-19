@@ -208,6 +208,7 @@ Ext.define('PdfViewer.view.PdfViewController', {
         me.scaleCombo = view.down('#scaleCombo');
         me.printButton = view.down('#printButton');
         me.downloadButton = view.down('#downloadButton');
+        me.downloadButton = view.down('#downloadButton');
 
         // PDFビューアー要素を取得
         const viewer = me.getPdfViewerElement();
@@ -242,6 +243,8 @@ Ext.define('PdfViewer.view.PdfViewController', {
             if (me.scaleCombo) me.scaleCombo.setDisabled(false);
             if (me.printButton) me.printButton.setDisabled(false);
             if (me.printButton) me.printButton.setVisible(view.getShowPrintButton());
+            if (me.downloadButton) me.downloadButton.setDisabled(false);
+            if (me.downloadButton) me.downloadButton.setVisible(view.getShowDownloadButton());
             
             // 現在のビューアー内のすべての要素をクリア
             while (viewer.firstChild) {
@@ -618,6 +621,14 @@ Ext.define('PdfViewer.view.PdfViewController', {
         if (!view.rendered) return;
         if (this.printButton) {
             this.printButton.setHidden(!newValue);
+        }
+    },
+
+    updateShowDownloadButton: function(newValue) {
+        const view = this.getView();
+        if (!view.rendered) return;
+        if (this.downloadButton) {
+            this.downloadButton.setHidden(!newValue);
         }
     },
 

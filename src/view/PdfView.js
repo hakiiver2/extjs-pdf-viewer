@@ -57,6 +57,8 @@ Ext.define('PdfViewer.view.PdfView', {
          */
         showPageNumber: false,
 
+        showDownloadButton: true,
+
         /**
          * @cfg {String} downloadButtonText
          * ダウンロードボタンのテキスト
@@ -300,6 +302,14 @@ Ext.define('PdfViewer.view.PdfView', {
         const controller = this.getController();
         if (controller) {
             controller.updateShowPrintButton(newIsPrint, oldIsPrint);
+        }
+    },
+
+    updateShowDownloadButton: function(newIsDownload, oldIsDownload) {
+        // コントローラに処理を委譲
+        const controller = this.getController();
+        if (controller) {
+            controller.updateShowDownloadButton(newIsDownload, oldIsDownload);
         }
     },
 
